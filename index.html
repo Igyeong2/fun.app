@@ -405,12 +405,16 @@
             </div>
         </div>
 
-        <!-- GAME 2: CATCH CAPYBARA -->
+        <!-- GAME 2: CATCH CAPYBARA (10 SECONDS / 6 CAPYBARAS) -->
         <div class="screen" id="screenGame2">
             <div style="text-align: center; width:100%;">
                 <div class="score-board" id="scoreBoard2">현재 승수: 0승 / 3판 중 2승 필요</div>
-                <span class="stage-tag">게임 2 🦫 튀어나오는 갱이 3번 잡기!</span>
-                <p class="sub-desc" id="capyScoreText">남은 횟수: 3번</p>
+                <span class="stage-tag">게임 2 🦫 10초 안에 갱이 6마리 잡기!</span>
+                <p class="sub-desc" id="capyScoreText">남은 횟수: 6마리 | 제한시간: 10초</p>
+            </div>
+
+            <div class="timer-container">
+                <div class="timer-bar" id="timerBar2"></div>
             </div>
 
             <div class="capy-grid">
@@ -425,7 +429,9 @@
                 <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
             </div>
 
-            <div style="width:100%;">
+            <div style="width:100%; text-align:center;">
+                <p id="game2Status" style="font-size:22px; font-weight:bold;"></p>
+                <button class="btn" id="btnRetry2" style="display:none; background:#e74c3c;" onclick="goToGame2()">🔄 다시 도전하기</button>
                 <button class="btn" id="btnNextGame3" style="display:none;" onclick="goToGame3()">마지막 게임 3 도전! ➡️</button>
             </div>
         </div>
@@ -478,6 +484,7 @@
         let chosenMenu = null;
         let winCount = 0;
         let game1Timer = null;
+        let game2Timer = null;
         let game3Timer = null;
 
         // Audio
@@ -610,7 +617,7 @@
             }, 50);
         }
 
-        /* ----- GAME 2: CATCH CAPYBARA ----- */
+        /* ----- GAME 2: CATCH CAPYBARA (10 SECONDS / 6 CAPYBARAS) ----- */
         let capyCount = 0;
         let moleInterval = null;
 
@@ -618,9 +625,54 @@
             playSound('click');
             switchScreen('screenGame2');
             updateScoreBoards();
-            capyCount = 3;
-            document.getElementById('capyScoreText').innerText = `남은 횟수: ${capyCount}번`;
+            setupGame2();
+        }
+
+        function setupGame2() {
+            clearInterval(game2Timer);
+            clearInterval(moleInterval);
+
+            capyCount = 6;
+            const subText = document.getElementById('capyScoreText');
+            const status = document.getElementById('game2Status');
+            const timerBar = document.getElementById('timerBar2');
+            const btnRetry = document.getElementById('btnRetry2');
+            const btnNext = document.getElementById('btnNextGame3');
+
+            status.innerText = '';
+            btnRetry.style.display = 'none';
+            btnNext.style.display = 'none';
+            subText.innerText = `남은 횟수: 6마리 | 제한시간: 10초`;
+            timerBar.style.width = '100%';
+
             startMoles();
+
+            // 10초 제한시간 (10,000ms)
+            let totalTime = 10000;
+            let timeLeft = totalTime;
+
+            game2Timer = setInterval(() => {
+                timeLeft -= 100;
+                const pct = (timeLeft / totalTime) * 100;
+                timerBar.style.width = `${Math.max(0, pct)}%`;
+
+                const secLeft = (timeLeft / 1000).toFixed(1);
+                if (capyCount > 0) {
+                    subText.innerText = `남은 횟수: ${capyCount}마리 | 남은 시간: ${Math.max(0, secLeft)}초`;
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(game2Timer);
+                    clearInterval(moleInterval);
+                    if (capyCount > 0) {
+                        playSound('fail');
+                        status.innerText = '⏰ 10초 시간 초과! 실패!';
+                        status.style.color = '#e74c3c';
+                        btnRetry.style.display = 'block';
+                        btnNext.style.display = 'block';
+                    }
+                }
+            }, 100);
         }
 
         function startMoles() {
@@ -630,20 +682,27 @@
                 holes.forEach(h => h.classList.remove('up'));
                 const randomHole = holes[Math.floor(Math.random() * holes.length)];
                 randomHole.classList.add('up');
-            }, 600);
+            }, 550);
         }
 
         function hitCapy(element) {
+            if (capyCount <= 0) return;
             playSound('click');
             element.parentElement.classList.remove('up');
             capyCount--;
+
+            const subText = document.getElementById('capyScoreText');
             if (capyCount > 0) {
-                document.getElementById('capyScoreText').innerText = `남은 횟수: ${capyCount}번`;
+                subText.innerText = `남은 횟수: ${capyCount}마리`;
             } else {
+                clearInterval(game2Timer);
                 clearInterval(moleInterval);
                 winCount++;
                 updateScoreBoards();
-                document.getElementById('capyScoreText').innerText = '🎉 게임 2 승리!';
+                const status = document.getElementById('game2Status');
+                status.innerText = '🎉 갱이 6마리 잡기 성공!';
+                status.style.color = '#2e7d32';
+                subText.innerText = '🎉 미션 성공!';
                 confetti({ particleCount: 70 });
                 document.getElementById('btnNextGame3').style.display = 'block';
             }
