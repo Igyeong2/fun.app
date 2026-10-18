@@ -200,7 +200,6 @@
             margin: 10px 0;
         }
 
-        /* 갱이/갷이 폰트 100% 동일화 (Noto Sans KR 굵은 고딕) */
         .text-cell {
             background: #fff3e0;
             padding: 8px 0;
@@ -256,26 +255,36 @@
         /* GAME 3: MEADOW HIDDEN CAPYBARA */
         .meadow-field {
             width: 100%;
-            height: 280px;
-            background: linear-gradient(to bottom, #87ceeb 30%, #7ec850 30%, #52932a 100%);
+            height: 300px;
+            background: linear-gradient(to bottom, #87ceeb 25%, #7ec850 25%, #4a8824 100%);
             border-radius: 20px;
-            border: 4px solid #38661a;
+            border: 4px solid #2d5416;
             position: relative;
             overflow: hidden;
             margin: 10px 0;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
         }
 
         .meadow-decoration {
             position: absolute;
-            font-size: 28px;
+            user-select: none;
             pointer-events: none;
+        }
+
+        .dec-fake {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .dec-fake:active {
+            transform: scale(1.2);
         }
 
         .hidden-capy {
             position: absolute;
             cursor: pointer;
             transition: transform 0.1s;
+            z-index: 10;
         }
 
         .hidden-capy:active {
@@ -421,12 +430,12 @@
             </div>
         </div>
 
-        <!-- GAME 3: 1 MINUTE MEADOW CAPYBARA HUNTING -->
+        <!-- GAME 3: 10 SECONDS MEADOW CAPYBARA HUNTING -->
         <div class="screen" id="screenGame3">
             <div style="text-align: center; width:100%;">
                 <div class="score-board" id="scoreBoard3">현재 승수: 0승 / 3판 중 2승 필요</div>
-                <span class="stage-tag">게임 3 🌾 1분 안에 초원 속 카피바라 5마리 찾기!</span>
-                <p class="sub-desc" id="game3SubText">남은 카피바라: 5마리 | 제한시간: 60초</p>
+                <span class="stage-tag">게임 3 🌾 10초 안에 초원 속 카피바라 5마리 찾기!</span>
+                <p class="sub-desc" id="game3SubText">남은 카피바라: 5마리 | 제한시간: 10초</p>
             </div>
 
             <div class="timer-container">
@@ -561,7 +570,7 @@
             btnNext.style.display = 'none';
             timerBar.style.width = '100%';
 
-            const total = 64; // 8x8 난이도 적용
+            const total = 64;
             const targetIdx = Math.floor(Math.random() * total);
 
             for (let i = 0; i < total; i++) {
@@ -640,7 +649,7 @@
             }
         }
 
-        /* ----- GAME 3: 1 MINUTE MEADOW HUNTING ----- */
+        /* ----- GAME 3: 10 SECONDS MEADOW HUNTING ----- */
         let foundCapys = 0;
 
         function goToGame3() {
@@ -661,25 +670,43 @@
             field.innerHTML = '';
             status.innerText = '';
             document.getElementById('btnFinalResult').style.display = 'none';
-            subText.innerText = `남은 카피바라: 5마리 | 제한시간: 60초`;
+            subText.innerText = `남은 카피바라: 5마리 | 제한시간: 10초`;
             timerBar.style.width = '100%';
 
-            const decos = ['🌿', '🌱', '🌾', '🌸', '🌼', '🌳'];
-            for (let i = 0; i < 12; i++) {
+            // 1. 배경을 가득 채우는 풀, 나무, 꽃
+            const decos = ['🌿', '🌱', '🌾', '🌸', '🌼', '🌳', '🌲', '☘️', '🎋'];
+            for (let i = 0; i < 22; i++) {
                 const dec = document.createElement('div');
                 dec.className = 'meadow-decoration';
                 dec.innerText = decos[Math.floor(Math.random() * decos.length)];
-                dec.style.left = `${Math.random() * 85 + 5}%`;
-                dec.style.top = `${Math.random() * 70 + 20}%`;
+                dec.style.left = `${Math.random() * 88}%`;
+                dec.style.top = `${Math.random() * 75 + 15}%`;
+                dec.style.fontSize = `${Math.random() * 20 + 25}px`;
+                dec.style.zIndex = Math.floor(Math.random() * 15);
                 field.appendChild(dec);
             }
 
+            // 2. 눈속임용 동물들
+            const fakeAnimals = ['🐻', '🐰', '🐿️', '🐶', '🐦', '🦊', '🐱', '🐹'];
+            for (let i = 0; i < 15; i++) {
+                const fake = document.createElement('div');
+                fake.className = 'dec-fake';
+                fake.innerText = fakeAnimals[Math.floor(Math.random() * fakeAnimals.length)];
+                fake.style.left = `${Math.random() * 88}%`;
+                fake.style.top = `${Math.random() * 70 + 20}%`;
+                fake.style.fontSize = `${Math.random() * 14 + 22}px`;
+                fake.style.zIndex = Math.floor(Math.random() * 12);
+                fake.onclick = function() { playSound('fail'); };
+                field.appendChild(fake);
+            }
+
+            // 3. 숨은 카피바라 5마리
             const capyConfigs = [
-                { top: '15%', left: '10%', size: '36px' },
-                { top: '65%', left: '80%', size: '30px' },
-                { top: '40%', left: '45%', size: '26px' },
-                { top: '80%', left: '20%', size: '24px' },
-                { top: '25%', left: '75%', size: '20px' }
+                { top: '28%', left: '8%', size: '20px', zIdx: 3, opacity: 0.8 },
+                { top: '70%', left: '82%', size: '18px', zIdx: 2, opacity: 0.7 },
+                { top: '48%', left: '42%', size: '16px', zIdx: 4, opacity: 0.85 },
+                { top: '82%', left: '18%', size: '22px', zIdx: 1, opacity: 0.75 },
+                { top: '32%', left: '72%', size: '14px', zIdx: 5, opacity: 0.65 }
             ];
 
             capyConfigs.forEach((cfg) => {
@@ -689,6 +716,8 @@
                 capy.style.top = cfg.top;
                 capy.style.left = cfg.left;
                 capy.style.fontSize = cfg.size;
+                capy.style.zIndex = cfg.zIdx;
+                capy.style.opacity = cfg.opacity;
 
                 capy.onclick = function() {
                     playSound('click');
@@ -710,7 +739,8 @@
                 field.appendChild(capy);
             });
 
-            let totalTime = 60000;
+            // 10초 제한시간 (10,000ms)
+            let totalTime = 10000;
             let timeLeft = totalTime;
 
             game3Timer = setInterval(() => {
@@ -718,16 +748,16 @@
                 const pct = (timeLeft / totalTime) * 100;
                 timerBar.style.width = `${Math.max(0, pct)}%`;
 
-                const secLeft = Math.ceil(timeLeft / 1000);
+                const secLeft = (timeLeft / 1000).toFixed(1);
                 if (foundCapys < 5) {
-                    subText.innerText = `남은 카피바라: ${5 - foundCapys}마리 | 남은 시간: ${secLeft}초`;
+                    subText.innerText = `남은 카피바라: ${5 - foundCapys}마리 | 남은 시간: ${Math.max(0, secLeft)}초`;
                 }
 
                 if (timeLeft <= 0) {
                     clearInterval(game3Timer);
                     if (foundCapys < 5) {
                         playSound('fail');
-                        status.innerText = '⏰ 1분 시간 초과! 실패!';
+                        status.innerText = '⏰ 10초 시간 초과! 실패!';
                         status.style.color = '#e74c3c';
                         document.getElementById('btnFinalResult').style.display = 'block';
                     }
