@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>앵기 저녁 메뉴 고르러 가보까 ~?</title>
+    <!-- Gaegu Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #5c8d37;
+            --primary-dark: #3a5c20;
+            --accent: #ff7b54;
+            --accent-bg: #ffe2d1;
+            --bg-sky: #87ceeb;
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Gaegu', cursive, sans-serif;
+            font-size: 20px;
+            background: linear-gradient(to bottom, #72c6ef 0%, #a8e063 70%, #56ab2f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        /* Zoo background elements */
+        .sun {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: #fbc531;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #fbc531;
+            animation: pulse 3s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        .cloud {
+            position: fixed;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: floatCloud 25s linear infinite;
+            z-index: 1;
+        }
+        .cloud1 { top: 40px; width: 120px; height: 40px; left: -150px; }
+        .cloud2 { top: 120px; width: 80px; height: 30px; left: -100px; animation-delay: 10s; }
+
+        @keyframes floatCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(100vw + 250px)); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        /* App Container */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 680px;
+            margin: 20px;
+            background: var(--card-bg);
+            border-radius: 32px;
+            box-shadow: var(--shadow);
+            border: 6px solid #4a6984;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: #e8f5e9;
+            padding: 16px;
+            text-align: center;
+            border-bottom: 4px dashed #a5d6a7;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #2e7d32;
+            text-shadow: 1px 1px 0px white;
+        }
+
+        /* Step Progress Indicator */
+        .step-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 15px;
+            background: #f1f8e9;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .step-item {
+            color: #a5d6a7;
+            transition: all 0.3s;
+        }
+        .step-item.active {
+            color: #2e7d32;
+            transform: scale(1.15);
+            text-decoration: underline;
+        }
+        .step-item.done {
+            color: #81c784;
+        }
+
+        /* Screen Wrapper */
+        .screen {
+            display: none;
+            flex: 1;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Curtains for Game Start */
+        .curtain-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            pointer-events: auto;
+            transition: opacity 0.5s ease;
+        }
+
+        .curtain-left, .curtain-right {
+            width: 50%;
+            height: 100%;
+            background: #c0392b;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+            position: relative;
+        }
+
+        .curtain-left::after, .curtain-right::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(255,255,255,0.1) 100%);
+            background-size: 40px 100%;
+        }
+
+        .curtain-open .curtain-left { transform: translateX(-100%); }
+        .curtain-open .curtain-right { transform: translateX(100%); }
+
+        .curtain-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+            text-align: center;
+            width: 85%;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 25px;
+            border: 4px solid #f39c12;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: opacity 0.4s ease;
+        }
+
+        .capy-title-img {
+            font-size: 70px;
+            animation: bounce 1.5s infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-family: 'Gaegu', cursive;
+            font-size: 26px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #2e7d32, 0 10px 15px rgba(0,0,0,0.2);
+            transition: all 0.1s;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #2e7d32, 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-accent {
+            background: #ff7b54;
+            box-shadow: 0 6px 0 #c0392b, 0 10px 15px rgba(0,0,0,0.2);
+        }
+        .btn-accent:active {
+            box-shadow: 0 2px 0 #c0392b, 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Stage Instructions */
+        .stage-tag {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border: 2px solid #a5d6a7;
+        }
+
+        /* STEP 1: Ideal World Cup */
+        .vs-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .vs-card {
+            background: #fff;
+            border: 4px solid #81c784;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .vs-card:hover {
+            transform: scale(1.03);
+            border-color: #2e7d32;
+        }
+
+        .vs-card:active {
+            transform: scale(0.97);
+        }
+
+        .vs-badge {
+            font-size: 30px;
+            font-weight: bold;
+            color: #e74c3c;
+            text-shadow: 1px 1px 0 white;
+            margin: -5px 0;
+        }
+
+        .food-emoji {
+            font-size: 45px;
+        }
+
+        .food-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* STEP 2: Slot Machine */
+        .slot-box {
+            background: #2c3e50;
+            border: 6px solid #f39c12;
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            margin: 15px 0;
+        }
+
+        .slot-window {
+            height: 90px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #bdc3c7;
+            position: relative;
+        }
+
+        .slot-reel {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* STEP 3: Mystic Cards */
+        .cards-grid {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .mystic-card {
+            flex: 1;
+            height: 150px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border: 3px solid #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 35px;
+            transition: transform 0.4s ease;
+            position: relative;
+        }
+
+        .mystic-card.flipped {
+            transform: rotateY(180deg);
+            background: #fff;
+            color: #2c3e50;
+            border-color: #6c5ce7;
+        }
+
+        .card-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* FINAL PRANK REVEAL SCREEN */
+        .final-box {
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .final-menu-title {
+            font-size: 36px;
+            color: #d35400;
+            margin: 15px 0;
+            font-weight: bold;
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 15px;
+            border: 2px dashed #ffb74d;
+        }
+
+        .capy-hero {
+            font-size: 90px;
+            margin: 10px 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* The Giant Prank Red X Overlay */
+        .prank-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 50;
+            padding: 20px;
+        }
+
+        .prank-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .big-x {
+            font-size: 110px;
+            color: #ff3838;
+            line-height: 1;
+            animation: zoomX 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 0 20px #ff3838;
+        }
+
+        .prank-text {
+            font-size: 34px;
+            color: #fff;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            word-break: keep-all;
+            line-height: 1.3;
+            animation: shake 0.5s ease infinite;
+        }
+
+        @keyframes zoomX {
+            0% { transform: scale(0) rotate(-45deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* Helper Subtext */
+        .sub-desc {
+            font-size: 20px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sun"></div>
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+
+    <div class="app-container">
+        
+        <!-- CURTAIN OPENING OVERLAY -->
+        <div class="curtain-overlay" id="curtainOverlay">
+            <div class="curtain-left"></div>
+            <div class="curtain-right"></div>
+            <div class="curtain-content" id="curtainContent">
+                <div class="capy-title-img">🦫✨</div>
+                <h2 style="font-size: 32px; color: #2e7d32; margin-bottom: 10px;">앵기 저녁 메뉴 고르러 가보까 ~?</h2>
+                <p style="font-size: 20px; color: #555; margin-bottom: 15px;">카피바라와 함께하는 3단계 운명 선택 게임!</p>
+                <button class="btn" onclick="startApp()">🚀 시작하기</button>
+            </div>
+        </div>
+
+        <header>
+            <h1>🦫 앵기 저녁 메뉴 고르러 가보까 ~?</h1>
+        </header>
+
+        <div class="step-bar">
+            <span class="step-item active" id="barStep1">1단계: 월드컵</span>
+            <span class="step-item" id="barStep2">2단계: 슬롯</span>
+            <span class="step-item" id="barStep3">3단계: 카드</span>
+        </div>
+
+        <!-- SCREEN 1: IDEAL WORLD CUP -->
+        <div class="screen active" id="screen1">
+            <div style="text-align: center; width:100%;">
+                <span class="stage-tag">1단계 🏆 이상형 월드컵</span>
+                <p class="sub-desc" id="worldcupRoundText">더 먹고 싶은 메뉴를 선택해 봐!</p>
+            </div>
+
+            <div class="vs-container" id="vsContainer">
+                <!-- JS dynamic generation -->
+            </div>
+
+            <div style="width: 100%;">
+                <button class="btn" id="btnNext1" style="display: none;" onclick="goToStep(2)">2단계로 이동하기 ➡️</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: SLOT MACHINE -->
+        <div class="screen" id="screen2">
+            <div style="text-align: center; width:100%;">
+                <span class="stage-tag">2단계 🎰 카피바라 슬롯</span>
+                <p class="sub-desc">1단계 우승 메뉴 포함! 레버를 돌려봐!</p>
+            </div>
+
+            <div class="slot-box">
+                <div class="slot-window">
+                    <div class="slot-reel" id="slotReel">❓❓❓</div>
+                </div>
+            </div>
+
+            <div style="width: 100%; text-align: center;">
+                <button class="btn btn-accent" id="btnSpin" onclick="spinSlot()">🎰 슬롯 돌리기!</button>
+                <button class="btn" id="btnNext2" style="display: none; margin-top: 10px;" onclick="goToStep(3)">마지막 3단계로 이동하기 ➡️</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: MYSTIC CARDS -->
+        <div class="screen" id="screen3">
+            <div style="text-align: center; width:100%;">
+                <span class="stage-tag">3단계 🃏 운명의 카드</span>
+                <p class="sub-desc">마지막 카드 1장을 신중하게 선택해 봐!</p>
+            </div>
+
+            <div class="cards-grid" id="cardsGrid">
+                <div class="mystic-card" onclick="pickCard(0)">
+                    <div class="card-inner">🦫<span style="font-size: 18px;">CARD 1</span></div>
+                </div>
+                <div class="mystic-card" onclick="pickCard(1)">
+                    <div class="card-inner">🦫<span style="font-size: 18px;">CARD 2</span></div>
+                </div>
+                <div class="mystic-card" onclick="pickCard(2)">
+                    <div class="card-inner">🦫<span style="font-size: 18px;">CARD 3</span></div>
+                </div>
+            </div>
+
+            <div style="width: 100%;">
+                <button class="btn" id="btnNext3" style="display: none;" onclick="showFinalResult()">최종 결과 확인하기 ✨</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: FINAL REVEAL & PRANK OVERLAY -->
+        <div class="screen" id="screen4">
+            <div class="final-box">
+                <span class="stage-tag">🎉 오늘 저녁 운명의 메뉴</span>
+                <div class="capy-hero">🦫🍲</div>
+                <div class="final-menu-title" id="finalMenuText">초밥</div>
+                <p style="font-size: 22px; color: #444;">앵기가 고른 최종 메뉴 당첨!</p>
+            </div>
+
+            <!-- PRANK OVERLAY -->
+            <div class="prank-overlay" id="prankOverlay">
+                <div class="big-x">❌</div>
+                <div class="prank-text">앵기는 이게 먹구 싶구나!!<br>난 안 먹고 싶어!!</div>
+                <div style="font-size: 50px; margin-top: 15px;">🦫🤪</div>
+                <button class="btn" style="margin-top: 25px; background: #fff; color: #c0392b;" onclick="location.reload()">처음부터 다시 고르기 🔄</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Default Requested Menu List
+        const rawMenuList = [
+            { name: "고기", emoji: "🥩" },
+            { name: "편의점", emoji: "🏪" },
+            { name: "굶기", emoji: "💧" },
+            { name: "곱창", emoji: "🥘" },
+            { name: "갈비", emoji: "🍖" },
+            { name: "피자", emoji: "🍕" },
+            { name: "감자탕", emoji: "🍲" },
+            { name: "족발", emoji: "🐖" },
+            { name: "엽떡", emoji: "🌶️" }
+        ];
+
+        // Web Audio API Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'slot') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'prank') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(60, audioCtx.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        // Start App Curtain Animation
+        function startApp() {
+            playSound('click');
+            document.getElementById('curtainContent').style.opacity = '0';
+            document.getElementById('curtainOverlay').classList.add('curtain-open');
+            setTimeout(() => {
+                document.getElementById('curtainOverlay').style.display = 'none';
+            }, 1200);
+            initWorldCup();
+        }
+
+        // Navigation between steps
+        function goToStep(stepNum) {
+            playSound('click');
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`screen${stepNum}`).classList.add('active');
+
+            document.querySelectorAll('.step-item').forEach((bar, idx) => {
+                bar.classList.remove('active');
+                if (idx + 1 === stepNum) bar.classList.add('active');
+                if (idx + 1 < stepNum) bar.classList.add('done');
+            });
+
+            if (stepNum === 2) {
+                setupSlot();
+            } else if (stepNum === 3) {
+                setupCards();
+            }
+        }
+
+        /* ---------------- STEP 1: WORLD CUP ---------------- */
+        let currentCandidates = [];
+        let nextRoundCandidates = [];
+        let currentPairIndex = 0;
+        let step1Winner = null;
+
+        function initWorldCup() {
+            currentCandidates = [...rawMenuList].sort(() => Math.random() - 0.5);
+            nextRoundCandidates = [];
+            currentPairIndex = 0;
+            renderMatch();
+        }
+
+        function renderMatch() {
+            const container = document.getElementById('vsContainer');
+            const roundText = document.getElementById('worldcupRoundText');
+            container.innerHTML = '';
+
+            if (currentCandidates.length === 1) {
+                // Final Winner of Step 1
+                step1Winner = currentCandidates[0];
+                roundText.innerHTML = `🏆 1단계 우승: <b>${step1Winner.emoji} ${step1Winner.name}</b>`;
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 20px;">
+                        <div style="font-size:80px; animation: bounce 1s infinite;">${step1Winner.emoji}</div>
+                        <h2 style="font-size:32px; color:#2e7d32; margin-top:10px;">${step1Winner.name}</h2>
+                    </div>
+                `;
+                document.getElementById('btnNext1').style.display = 'block';
+                return;
+            }
+
+            // Handle Odd Number Bypass (Bye)
+            if (currentPairIndex >= currentCandidates.length - 1) {
+                if (currentPairIndex === currentCandidates.length - 1) {
+                    nextRoundCandidates.push(currentCandidates[currentPairIndex]);
+                }
+                currentCandidates = [...nextRoundCandidates];
+                nextRoundCandidates = [];
+                currentPairIndex = 0;
+                renderMatch();
+                return;
+            }
+
+            const itemA = currentCandidates[currentPairIndex];
+            const itemB = currentCandidates[currentPairIndex + 1];
+
+            roundText.innerText = `${currentCandidates.length}강 진행 중 (${Math.floor(currentPairIndex/2) + 1}/${Math.ceil(currentCandidates.length/2)})`;
+
+            container.innerHTML = `
+                <div class="vs-card" onclick="selectCandidate(0)">
+                    <span class="food-emoji">${itemA.emoji}</span>
+                    <span class="food-name">${itemA.name}</span>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="vs-card" onclick="selectCandidate(1)">
+                    <span class="food-emoji">${itemB.emoji}</span>
+                    <span class="food-name">${itemB.name}</span>
+                </div>
+            `;
+        }
+
+        function selectCandidate(selectedIndex) {
+            playSound('click');
+            const selected = currentCandidates[currentPairIndex + selectedIndex];
+            nextRoundCandidates.push(selected);
+            currentPairIndex += 2;
+            renderMatch();
+        }
+
+        /* ---------------- STEP 2: SLOT MACHINE ---------------- */
+        let slotOptions = [];
+        let step2Winner = null;
+
+        function setupSlot() {
+            // Guarantee Step 1 Winner + 2 random items
+            const remaining = rawMenuList.filter(m => m.name !== step1Winner.name);
+            const shuffled = remaining.sort(() => Math.random() - 0.5);
+            slotOptions = [step1Winner, shuffled[0], shuffled[1]].sort(() => Math.random() - 0.5);
+            document.getElementById('slotReel').innerText = "❓❓❓";
+            document.getElementById('btnSpin').style.display = 'inline-block';
+            document.getElementById('btnNext2').style.display = 'none';
+        }
+
+        function spinSlot() {
+            playSound('click');
+            const reel = document.getElementById('slotReel');
+            const btnSpin = document.getElementById('btnSpin');
+            btnSpin.disabled = true;
+
+            let counter = 0;
+            const interval = setInterval(() => {
+                const randomItem = slotOptions[Math.floor(Math.random() * slotOptions.length)];
+                reel.innerText = `${randomItem.emoji} ${randomItem.name}`;
+                playSound('slot');
+                counter++;
+
+                if (counter > 20) {
+                    clearInterval(interval);
+                    step2Winner = slotOptions[Math.floor(Math.random() * slotOptions.length)];
+                    reel.innerText = `${step2Winner.emoji} ${step2Winner.name}`;
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                    btnSpin.style.display = 'none';
+                    document.getElementById('btnNext2').style.display = 'block';
+                }
+            }, 100);
+        }
+
+        /* ---------------- STEP 3: MYSTIC CARDS ---------------- */
+        let finalSelectedMenu = null;
+
+        function setupCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = '';
+
+            // Card Pool includes Step 2 Winner
+            const otherPool = rawMenuList.filter(m => m.name !== step2Winner.name).sort(() => Math.random() - 0.5);
+            const cardItems = [step2Winner, otherPool[0], otherPool[1]].sort(() => Math.random() - 0.5);
+
+            cardItems.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'mystic-card';
+                card.innerHTML = `<div class="card-inner">🦫<span style="font-size:18px;">카드 ${idx+1}</span></div>`;
+                card.onclick = () => pickCard(card, item);
+                grid.appendChild(card);
+            });
+            document.getElementById('btnNext3').style.display = 'none';
+        }
+
+        function pickCard(cardElement, selectedItem) {
+            if (finalSelectedMenu) return; // Prevent double pick
+            playSound('click');
+            finalSelectedMenu = selectedItem;
+
+            cardElement.classList.add('flipped');
+            cardElement.innerHTML = `
+                <div class="card-inner">
+                    <span style="font-size:40px;">${selectedItem.emoji}</span>
+                    <span style="font-size:22px; font-weight:bold; color:#2c3e50;">${selectedItem.name}</span>
+                </div>
+            `;
+
+            confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('btnNext3').style.display = 'block';
+        }
+
+        /* ---------------- FINAL PRANK REVEAL ---------------- */
+        function showFinalResult() {
+            playSound('click');
+            goToStep(4);
+            document.getElementById('finalMenuText').innerText = `${finalSelectedMenu.emoji} ${finalSelectedMenu.name}`;
+
+            confetti({ particleCount: 100, spread: 100, origin: { y: 0.5 } });
+
+            // Trigger Prank Overlay after 2.5 seconds delay
+            setTimeout(() => {
+                playSound('prank');
+                document.getElementById('prankOverlay').classList.add('active');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
