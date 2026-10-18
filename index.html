@@ -666,10 +666,10 @@
                     clearInterval(moleInterval);
                     if (capyCount > 0) {
                         playSound('fail');
-                        status.innerText = '⏰ 10초 시간 초과! 실패!';
+                        status.innerText = '⏰ 10초 시간 초과! 패배!';
                         status.style.color = '#e74c3c';
                         btnRetry.style.display = 'block';
-                        btnNext.style.display = 'block';
+                        btnNext.style.display = 'block'; // 실패해도 다음 게임 버튼 표시
                     }
                 }
             }, 100);
@@ -704,7 +704,7 @@
                 status.style.color = '#2e7d32';
                 subText.innerText = '🎉 미션 성공!';
                 confetti({ particleCount: 70 });
-                document.getElementById('btnNextGame3').style.display = 'block';
+                document.getElementById('btnNextGame3').style.display = 'block'; // 성공 시 다음 게임 버튼 표시
             }
         }
 
