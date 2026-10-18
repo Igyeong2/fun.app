@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>앵기 저녁 메뉴 고르러 가보까 ~?</title>
-    <!-- Gaegu Google Font -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti Library -->
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
             --primary: #5c8d37;
-            --primary-dark: #3a5c20;
             --accent: #ff7b54;
-            --accent-bg: #ffe2d1;
-            --bg-sky: #87ceeb;
-            --card-bg: rgba(255, 255, 255, 0.94);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
@@ -39,48 +36,12 @@
             align-items: center;
             overflow-x: hidden;
             color: #2c3e50;
-            position: relative;
         }
 
-        /* Zoo background elements */
-        .sun {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 70px;
-            height: 70px;
-            background: #fbc531;
-            border-radius: 50%;
-            box-shadow: 0 0 30px #fbc531;
-            animation: pulse 3s infinite ease-in-out;
-            z-index: 1;
-        }
-
-        .cloud {
-            position: fixed;
-            background: white;
-            border-radius: 50px;
-            opacity: 0.8;
-            animation: floatCloud 25s linear infinite;
-            z-index: 1;
-        }
-        .cloud1 { top: 40px; width: 120px; height: 40px; left: -150px; }
-        .cloud2 { top: 120px; width: 80px; height: 30px; left: -100px; animation-delay: 10s; }
-
-        @keyframes floatCloud {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(100vw + 250px)); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-
-        /* App Container */
         .app-container {
             width: 100%;
             max-width: 480px;
-            min-height: 680px;
+            min-height: 650px;
             margin: 20px;
             background: var(--card-bg);
             border-radius: 32px;
@@ -93,7 +54,6 @@
             overflow: hidden;
         }
 
-        /* Header */
         header {
             background: #e8f5e9;
             padding: 16px;
@@ -102,36 +62,10 @@
         }
 
         header h1 {
-            font-size: 32px;
+            font-size: 28px;
             color: #2e7d32;
-            text-shadow: 1px 1px 0px white;
         }
 
-        /* Step Progress Indicator */
-        .step-bar {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 15px;
-            background: #f1f8e9;
-            border-bottom: 2px solid #c8e6c9;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .step-item {
-            color: #a5d6a7;
-            transition: all 0.3s;
-        }
-        .step-item.active {
-            color: #2e7d32;
-            transform: scale(1.15);
-            text-decoration: underline;
-        }
-        .step-item.done {
-            color: #81c784;
-        }
-
-        /* Screen Wrapper */
         .screen {
             display: none;
             flex: 1;
@@ -139,7 +73,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .screen.active {
@@ -151,7 +85,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Curtains for Game Start */
+        /* Curtains */
         .curtain-overlay {
             position: absolute;
             top: 0;
@@ -160,7 +94,6 @@
             height: 100%;
             z-index: 100;
             display: flex;
-            pointer-events: auto;
             transition: opacity 0.5s ease;
         }
 
@@ -170,17 +103,6 @@
             background: #c0392b;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
             transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
-            position: relative;
-        }
-
-        .curtain-left::after, .curtain-right::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.2) 50%, rgba(255,255,255,0.1) 100%);
-            background-size: 40px 100%;
         }
 
         .curtain-open .curtain-left { transform: translateX(-100%); }
@@ -199,18 +121,6 @@
             border-radius: 25px;
             border: 4px solid #f39c12;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: opacity 0.4s ease;
-        }
-
-        .capy-title-img {
-            font-size: 70px;
-            animation: bounce 1.5s infinite;
-            margin-bottom: 10px;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
         }
 
         .btn {
@@ -223,7 +133,7 @@
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #2e7d32, 0 10px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 0 #2e7d32;
             transition: all 0.1s;
             margin-top: 15px;
             width: 100%;
@@ -231,18 +141,9 @@
 
         .btn:active {
             transform: translateY(4px);
-            box-shadow: 0 2px 0 #2e7d32, 0 5px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 0 #2e7d32;
         }
 
-        .btn-accent {
-            background: #ff7b54;
-            box-shadow: 0 6px 0 #c0392b, 0 10px 15px rgba(0,0,0,0.2);
-        }
-        .btn-accent:active {
-            box-shadow: 0 2px 0 #c0392b, 0 5px 10px rgba(0,0,0,0.2);
-        }
-
-        /* Stage Instructions */
         .stage-tag {
             background: #e8f5e9;
             color: #2e7d32;
@@ -254,236 +155,165 @@
             border: 2px solid #a5d6a7;
         }
 
-        /* STEP 1: Ideal World Cup */
-        .vs-container {
+        /* TIMER BAR */
+        .timer-container {
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 10px 0;
-        }
-
-        .vs-card {
-            background: #fff;
-            border: 4px solid #81c784;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .vs-card:hover {
-            transform: scale(1.03);
-            border-color: #2e7d32;
-        }
-
-        .vs-card:active {
-            transform: scale(0.97);
-        }
-
-        .vs-badge {
-            font-size: 30px;
-            font-weight: bold;
-            color: #e74c3c;
-            text-shadow: 1px 1px 0 white;
-            margin: -5px 0;
-        }
-
-        .food-emoji {
-            font-size: 45px;
-        }
-
-        .food-name {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        /* STEP 2: Slot Machine */
-        .slot-box {
-            background: #2c3e50;
-            border: 6px solid #f39c12;
-            border-radius: 20px;
-            padding: 20px;
-            width: 100%;
-            text-align: center;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            margin: 15px 0;
-        }
-
-        .slot-window {
-            height: 90px;
-            background: #fff;
-            border-radius: 12px;
+            height: 18px;
+            background: #e0e0e0;
+            border-radius: 10px;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 4px solid #bdc3c7;
-            position: relative;
-        }
-
-        .slot-reel {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2c3e50;
-            transition: transform 0.1s ease-out;
-        }
-
-        /* STEP 3: Mystic Cards */
-        .cards-grid {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            width: 100%;
-            margin: 20px 0;
-        }
-
-        .mystic-card {
-            flex: 1;
-            height: 150px;
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-            border: 3px solid #fff;
-            border-radius: 15px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 35px;
-            transition: transform 0.4s ease;
-            position: relative;
-        }
-
-        .mystic-card.flipped {
-            transform: rotateY(180deg);
-            background: #fff;
-            color: #2c3e50;
-            border-color: #6c5ce7;
-        }
-
-        .card-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* FINAL PRANK REVEAL SCREEN */
-        .final-box {
-            text-align: center;
-            width: 100%;
-            position: relative;
-        }
-
-        .final-menu-title {
-            font-size: 36px;
-            color: #d35400;
-            margin: 15px 0;
-            font-weight: bold;
-            background: #fff3e0;
-            padding: 10px;
-            border-radius: 15px;
-            border: 2px dashed #ffb74d;
-        }
-
-        .capy-hero {
-            font-size: 90px;
             margin: 10px 0;
-            position: relative;
-            display: inline-block;
+            border: 2px solid #bbb;
         }
 
-        /* The Giant Prank Red X Overlay */
-        .prank-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .timer-bar {
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.88);
-            border-radius: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            z-index: 50;
-            padding: 20px;
+            background: #e74c3c;
+            transition: width 0.1s linear;
         }
 
-        .prank-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
+        /* GAME 1: TEXT GRID */
+        .text-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            width: 100%;
+            background: #fff;
+            padding: 15px;
+            border-radius: 20px;
+            border: 4px solid #ffb74d;
+            margin: 10px 0;
         }
 
-        .big-x {
-            font-size: 110px;
-            color: #ff3838;
-            line-height: 1;
-            animation: zoomX 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0 0 20px #ff3838;
-        }
-
-        .prank-text {
-            font-size: 34px;
-            color: #fff;
-            margin-top: 15px;
+        .text-cell {
+            background: #fff3e0;
+            padding: 10px 0;
             text-align: center;
+            font-size: 22px;
             font-weight: bold;
-            word-break: keep-all;
-            line-height: 1.3;
-            animation: shake 0.5s ease infinite;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid #ffe0b2;
         }
 
-        @keyframes zoomX {
-            0% { transform: scale(0) rotate(-45deg); }
-            100% { transform: scale(1) rotate(0deg); }
+        /* GAME 2: CATCH CAPYBARA */
+        .capy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin: 15px 0;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-6px); }
-            40% { transform: translateX(6px); }
-            60% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
+        .capy-hole {
+            height: 90px;
+            background: #795548;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #4e342e;
+            box-shadow: inset 0 10px 10px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
         }
 
-        /* Helper Subtext */
+        .capy-target {
+            font-size: 55px;
+            position: absolute;
+            bottom: -70px;
+            transition: bottom 0.15s ease-out;
+            cursor: pointer;
+        }
+
+        .capy-hole.up .capy-target {
+            bottom: 5px;
+        }
+
+        /* GAME 3: MEADOW HIDDEN CAPYBARA */
+        .meadow-field {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(to bottom, #87ceeb 30%, #7ec850 30%, #52932a 100%);
+            border-radius: 20px;
+            border: 4px solid #38661a;
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .meadow-decoration {
+            position: absolute;
+            font-size: 28px;
+            pointer-events: none;
+        }
+
+        .hidden-capy {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .hidden-capy:active {
+            transform: scale(1.3);
+        }
+
+        /* MENU SELECTION GRID */
+        .menu-select-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .menu-btn {
+            background: #fff;
+            border: 3px solid #81c784;
+            padding: 12px;
+            border-radius: 15px;
+            font-family: 'Gaegu', cursive;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .menu-btn.selected {
+            background: #2e7d32;
+            color: #fff;
+            border-color: #1b5e20;
+        }
+
+        .score-board {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d35400;
+            margin-bottom: 5px;
+        }
+
         .sub-desc {
-            font-size: 20px;
+            font-size: 19px;
             color: #666;
             text-align: center;
-            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="sun"></div>
-    <div class="cloud cloud1"></div>
-    <div class="cloud cloud2"></div>
-
     <div class="app-container">
         
-        <!-- CURTAIN OPENING OVERLAY -->
+        <!-- OPENING CURTAIN -->
         <div class="curtain-overlay" id="curtainOverlay">
             <div class="curtain-left"></div>
             <div class="curtain-right"></div>
             <div class="curtain-content" id="curtainContent">
-                <div class="capy-title-img">🦫✨</div>
-                <h2 style="font-size: 32px; color: #2e7d32; margin-bottom: 10px;">앵기 저녁 메뉴 고르러 가보까 ~?</h2>
-                <p style="font-size: 20px; color: #555; margin-bottom: 15px;">갱이와 함께하는 3단계 저녁 선택 게임!</p>
-                <button class="btn" onclick="startApp()">🚀 시작하기</button>
+                <div style="font-size:70px; margin-bottom:10px;">🦫🌾</div>
+                <h2 style="font-size: 30px; color: #2e7d32; margin-bottom: 10px;">앵기 저녁 메뉴 고르러 가보까 ~?</h2>
+                <p style="font-size: 19px; color: #555; margin-bottom: 15px;">3개 게임 중 2개 이상 승리 시 갱이가 쏜다!</p>
+                <button class="btn" onclick="startApp()">🚀 도전자 등장!</button>
             </div>
         </div>
 
@@ -491,97 +321,100 @@
             <h1>🦫 앵기 저녁 메뉴 고르러 가보까 ~?</h1>
         </header>
 
-        <div class="step-bar">
-            <span class="step-item active" id="barStep1">1단계: 월드컵</span>
-            <span class="step-item" id="barStep2">2단계: 슬롯</span>
-            <span class="step-item" id="barStep3">3단계: 카드</span>
-        </div>
-
-        <!-- SCREEN 1: IDEAL WORLD CUP -->
-        <div class="screen active" id="screen1">
+        <!-- MENU PRE-SELECT SCREEN -->
+        <div class="screen active" id="screenMenu">
             <div style="text-align: center; width:100%;">
-                <span class="stage-tag">1단계 🏆 이상형 월드컵</span>
-                <p class="sub-desc" id="worldcupRoundText">더 먹고 싶은 메뉴를 선택해 봐!</p>
+                <span class="stage-tag">오늘 가장 먹고 싶은 메뉴 선택</span>
+                <p class="sub-desc">2판 이상 이기면 갱이가 이거 사줌!</p>
             </div>
 
-            <div class="vs-container" id="vsContainer">
-                <!-- JS dynamic generation -->
-            </div>
+            <div class="menu-select-grid" id="menuGrid"></div>
 
-            <div style="width: 100%;">
-                <button class="btn" id="btnNext1" style="display: none;" onclick="goToStep(2)">2단계로 이동하기 ➡️</button>
-            </div>
+            <button class="btn" id="btnStartGames" style="display:none;" onclick="goToGame1()">🎮 게임 1 도전하기!</button>
         </div>
 
-        <!-- SCREEN 2: SLOT MACHINE -->
-        <div class="screen" id="screen2">
+        <!-- GAME 1: 2 SECONDS FIND '갷이' -->
+        <div class="screen" id="screenGame1">
             <div style="text-align: center; width:100%;">
-                <span class="stage-tag">2단계 🎰 카피바라 슬롯</span>
-                <p class="sub-desc">1단계 우승 메뉴 포함! 레버를 돌려봐!</p>
+                <div class="score-board" id="scoreBoard1">현재 승수: 0승 / 3판 중 2승 필요</div>
+                <span class="stage-tag">게임 1 ⏱️ 2초 안에 '갷이' 터치!</span>
             </div>
 
-            <div class="slot-box">
-                <div class="slot-window">
-                    <div class="slot-reel" id="slotReel">❓❓❓</div>
-                </div>
+            <div class="timer-container">
+                <div class="timer-bar" id="timerBar1"></div>
             </div>
 
-            <div style="width: 100%; text-align: center;">
-                <button class="btn btn-accent" id="btnSpin" onclick="spinSlot()">🎰 슬롯 돌리기!</button>
-                <button class="btn" id="btnNext2" style="display: none; margin-top: 10px;" onclick="goToStep(3)">마지막 3단계로 이동하기 ➡️</button>
+            <div class="text-grid" id="textGrid1"></div>
+
+            <div style="width:100%; text-align:center;">
+                <p id="game1Status" style="font-size:22px; font-weight:bold;"></p>
+                <button class="btn" id="btnRetry1" style="display:none; background:#e74c3c;" onclick="setupGame1()">🔄 다시 도전하기</button>
+                <button class="btn" id="btnNextGame2" style="display:none;" onclick="goToGame2()">게임 2 도전하기 ➡️</button>
             </div>
         </div>
 
-        <!-- SCREEN 3: MYSTIC CARDS -->
-        <div class="screen" id="screen3">
+        <!-- GAME 2: CATCH CAPYBARA -->
+        <div class="screen" id="screenGame2">
             <div style="text-align: center; width:100%;">
-                <span class="stage-tag">3단계 🃏 운명의 카드</span>
-                <p class="sub-desc">마지막 카드 1장을 신중하게 선택해 봐!</p>
+                <div class="score-board" id="scoreBoard2">현재 승수: 0승 / 3판 중 2승 필요</div>
+                <span class="stage-tag">게임 2 🦫 튀어나오는 갱이 3번 잡기!</span>
+                <p class="sub-desc" id="capyScoreText">남은 횟수: 3번</p>
             </div>
 
-            <div class="cards-grid" id="cardsGrid">
-                <div class="mystic-card" onclick="pickCard(0)">
-                    <div class="card-inner">🦫<span style="font-size: 18px;">CARD 1</span></div>
-                </div>
-                <div class="mystic-card" onclick="pickCard(1)">
-                    <div class="card-inner">🦫<span style="font-size: 18px;">CARD 2</span></div>
-                </div>
-                <div class="mystic-card" onclick="pickCard(2)">
-                    <div class="card-inner">🦫<span style="font-size: 18px;">CARD 3</span></div>
-                </div>
+            <div class="capy-grid">
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
+                <div class="capy-hole"><div class="capy-target" onclick="hitCapy(this)">🦫</div></div>
             </div>
 
-            <div style="width: 100%;">
-                <button class="btn" id="btnNext3" style="display: none;" onclick="showFinalResult()">최종 결과 확인하기 ✨</button>
+            <div style="width:100%;">
+                <button class="btn" id="btnNextGame3" style="display:none;" onclick="goToGame3()">마지막 게임 3 도전! ➡️</button>
             </div>
         </div>
 
-        <!-- SCREEN 4: FINAL REVEAL & PRANK OVERLAY -->
-        <div class="screen" id="screen4">
-            <div class="final-box">
-                <span class="stage-tag">🎉 오늘 저녁 운명의 메뉴</span>
-                <div class="capy-hero">🦫🍲</div>
-                <div class="final-menu-title" id="finalMenuText">초밥</div>
-                <p style="font-size: 22px; color: #444;">앵기가 고른 최종 메뉴 당첨!</p>
+        <!-- GAME 3: 1 MINUTE MEADOW CAPYBARA HUNTING -->
+        <div class="screen" id="screenGame3">
+            <div style="text-align: center; width:100%;">
+                <div class="score-board" id="scoreBoard3">현재 승수: 0승 / 3판 중 2승 필요</div>
+                <span class="stage-tag">게임 3 🌾 1분 안에 초원 속 카피바라 5마리 찾기!</span>
+                <p class="sub-desc" id="game3SubText">남은 카피바라: 5마리 | 제한시간: 60초</p>
             </div>
 
-            <!-- PRANK OVERLAY -->
-            <div class="prank-overlay" id="prankOverlay">
-                <div class="big-x">❌</div>
-                <div class="prank-text">앵기는 이게 먹구 싶구나!!<br>난 안 먹고 싶어!!</div>
-                <div style="font-size: 50px; margin-top: 15px;">🦫🤪</div>
-                <button class="btn" style="margin-top: 25px; background: #fff; color: #c0392b;" onclick="location.reload()">처음부터 다시 고르기 🔄</button>
+            <div class="timer-container">
+                <div class="timer-bar" id="timerBar3"></div>
+            </div>
+
+            <div class="meadow-field" id="meadowField"></div>
+
+            <div style="width:100%; text-align:center;">
+                <p id="game3Status" style="font-size:22px; font-weight:bold;"></p>
+                <button class="btn" id="btnFinalResult" style="display:none;" onclick="showFinalResult()">🏆 최종 결과 확인하기!</button>
+            </div>
+        </div>
+
+        <!-- FINAL REVEAL SCREEN -->
+        <div class="screen" id="screenFinal">
+            <div style="text-align: center; width:100%; margin-top: auto; margin-bottom: auto;">
+                <div id="finalIcon" style="font-size: 90px; margin-bottom: 10px;">🎁</div>
+                <div id="finalTitle" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">성공!</div>
+                <div style="font-size: 32px; color: #d35400; font-weight: bold; background:#fff3e0; padding:10px; border-radius:15px; margin: 15px 0;" id="finalMenuName">고기</div>
+                <div id="finalMessage" style="font-size: 28px; font-weight: bold; color: #2e7d32; word-break: keep-all;">갱이가 사주께! ❤️</div>
+                <button class="btn" style="margin-top: 30px;" onclick="location.reload()">처음부터 다시 하기 🔄</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Default Requested Menu List
-        const rawMenuList = [
+        const menuList = [
             { name: "고기", emoji: "🥩" },
             { name: "편의점", emoji: "🏪" },
-            { name: "굶기", emoji: "💧" },
             { name: "곱창", emoji: "🥘" },
             { name: "갈비", emoji: "🍖" },
             { name: "피자", emoji: "🍕" },
@@ -590,13 +423,15 @@
             { name: "엽떡", emoji: "🌶️" }
         ];
 
-        // Web Audio API Sound Effects
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let chosenMenu = null;
+        let winCount = 0;
+        let game1Timer = null;
+        let game3Timer = null;
 
+        // Audio
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
@@ -605,30 +440,18 @@
             if (type === 'click') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.1);
-            } else if (type === 'slot') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.05);
-            } else if (type === 'prank') {
+            } else if (type === 'fail') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(60, audioCtx.currentTime + 0.4);
-                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.4);
+                osc.stop(audioCtx.currentTime + 0.3);
             }
         }
 
-        // Start App Curtain Animation
         function startApp() {
             playSound('click');
             document.getElementById('curtainContent').style.opacity = '0';
@@ -636,187 +459,265 @@
             setTimeout(() => {
                 document.getElementById('curtainOverlay').style.display = 'none';
             }, 1200);
-            initWorldCup();
+            renderMenuGrid();
         }
 
-        // Navigation between steps
-        function goToStep(stepNum) {
-            playSound('click');
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(`screen${stepNum}`).classList.add('active');
+        function renderMenuGrid() {
+            const grid = document.getElementById('menuGrid');
+            grid.innerHTML = '';
+            menuList.forEach(item => {
+                const btn = document.createElement('div');
+                btn.className = 'menu-btn';
+                btn.innerText = `${item.emoji} ${item.name}`;
+                btn.onclick = () => {
+                    playSound('click');
+                    document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    chosenMenu = item;
+                    document.getElementById('btnStartGames').style.display = 'block';
+                };
+                grid.appendChild(btn);
+            });
+        }
 
-            document.querySelectorAll('.step-item').forEach((bar, idx) => {
-                bar.classList.remove('active');
-                if (idx + 1 === stepNum) bar.classList.add('active');
-                if (idx + 1 < stepNum) bar.classList.add('done');
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function updateScoreBoards() {
+            document.getElementById('scoreBoard1').innerText = `현재 승수: ${winCount}승 / 3판 중 2승 필요`;
+            document.getElementById('scoreBoard2').innerText = `현재 승수: ${winCount}승 / 3판 중 2승 필요`;
+            document.getElementById('scoreBoard3').innerText = `현재 승수: ${winCount}승 / 3판 중 2승 필요`;
+        }
+
+        /* ----- GAME 1: 2 SECONDS FIND '갷이' ----- */
+        function goToGame1() {
+            playSound('click');
+            switchScreen('screenGame1');
+            updateScoreBoards();
+            setupGame1();
+        }
+
+        function setupGame1() {
+            clearInterval(game1Timer);
+            const grid = document.getElementById('textGrid1');
+            const status = document.getElementById('game1Status');
+            const timerBar = document.getElementById('timerBar1');
+            const btnRetry = document.getElementById('btnRetry1');
+            const btnNext = document.getElementById('btnNextGame2');
+
+            grid.innerHTML = '';
+            status.innerText = '';
+            btnRetry.style.display = 'none';
+            btnNext.style.display = 'none';
+            timerBar.style.width = '100%';
+
+            const total = 25;
+            const targetIdx = Math.floor(Math.random() * total);
+
+            for (let i = 0; i < total; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'text-cell';
+                if (i === targetIdx) {
+                    cell.innerText = '갷이';
+                    cell.onclick = () => {
+                        clearInterval(game1Timer);
+                        playSound('click');
+                        winCount++;
+                        updateScoreBoards();
+                        status.innerText = '🎉 1승 성공! 2초 안에 찾았다!';
+                        status.style.color = '#2e7d32';
+                        confetti({ particleCount: 50 });
+                        btnNext.style.display = 'block';
+                    };
+                } else {
+                    cell.innerText = '갱이';
+                    cell.onclick = () => { cell.style.opacity = '0.3'; };
+                }
+                grid.appendChild(cell);
+            }
+
+            let timeLeft = 2000;
+            game1Timer = setInterval(() => {
+                timeLeft -= 50;
+                timerBar.style.width = `${Math.max(0, (timeLeft / 2000) * 100)}%`;
+                if (timeLeft <= 0) {
+                    clearInterval(game1Timer);
+                    playSound('fail');
+                    status.innerText = '⏰ 시간 초과! 패배!';
+                    status.style.color = '#e74c3c';
+                    btnRetry.style.display = 'block';
+                    btnNext.style.display = 'block';
+                }
+            }, 50);
+        }
+
+        /* ----- GAME 2: CATCH CAPYBARA ----- */
+        let capyCount = 0;
+        let moleInterval = null;
+
+        function goToGame2() {
+            playSound('click');
+            switchScreen('screenGame2');
+            updateScoreBoards();
+            capyCount = 3;
+            document.getElementById('capyScoreText').innerText = `남은 횟수: ${capyCount}번`;
+            startMoles();
+        }
+
+        function startMoles() {
+            const holes = document.querySelectorAll('.capy-hole');
+            clearInterval(moleInterval);
+            moleInterval = setInterval(() => {
+                holes.forEach(h => h.classList.remove('up'));
+                const randomHole = holes[Math.floor(Math.random() * holes.length)];
+                randomHole.classList.add('up');
+            }, 600);
+        }
+
+        function hitCapy(element) {
+            playSound('click');
+            element.parentElement.classList.remove('up');
+            capyCount--;
+            if (capyCount > 0) {
+                document.getElementById('capyScoreText').innerText = `남은 횟수: ${capyCount}번`;
+            } else {
+                clearInterval(moleInterval);
+                winCount++;
+                updateScoreBoards();
+                document.getElementById('capyScoreText').innerText = '🎉 게임 2 승리!';
+                confetti({ particleCount: 70 });
+                document.getElementById('btnNextGame3').style.display = 'block';
+            }
+        }
+
+        /* ----- GAME 3: 1 MINUTE MEADOW HUNTING ----- */
+        let foundCapys = 0;
+
+        function goToGame3() {
+            playSound('click');
+            switchScreen('screenGame3');
+            updateScoreBoards();
+            setupGame3();
+        }
+
+        function setupGame3() {
+            clearInterval(game3Timer);
+            foundCapys = 0;
+            const field = document.getElementById('meadowField');
+            const subText = document.getElementById('game3SubText');
+            const status = document.getElementById('game3Status');
+            const timerBar = document.getElementById('timerBar3');
+
+            field.innerHTML = '';
+            status.innerText = '';
+            document.getElementById('btnFinalResult').style.display = 'none';
+            subText.innerText = `남은 카피바라: 5마리 | 제한시간: 60초`;
+            timerBar.style.width = '100%';
+
+            // Grass & Flower Decorations
+            const decos = ['🌿', '🌱', '🌾', '🌸', '🌼', '🌳'];
+            for (let i = 0; i < 12; i++) {
+                const dec = document.createElement('div');
+                dec.className = 'meadow-decoration';
+                dec.innerText = decos[Math.floor(Math.random() * decos.length)];
+                dec.style.left = `${Math.random() * 85 + 5}%`;
+                dec.style.top = `${Math.random() * 70 + 20}%`;
+                field.appendChild(dec);
+            }
+
+            // Hidden 5 Capybaras
+            const capyConfigs = [
+                { top: '15%', left: '10%', size: '36px' },
+                { top: '65%', left: '80%', size: '30px' },
+                { top: '40%', left: '45%', size: '26px' },
+                { top: '80%', left: '20%', size: '24px' },
+                { top: '25%', left: '75%', size: '20px' } // Tiny hidden one
+            ];
+
+            capyConfigs.forEach((cfg) => {
+                const capy = document.createElement('div');
+                capy.className = 'hidden-capy';
+                capy.innerText = '🦫';
+                capy.style.top = cfg.top;
+                capy.style.left = cfg.left;
+                capy.style.fontSize = cfg.size;
+
+                capy.onclick = function() {
+                    playSound('click');
+                    this.remove();
+                    foundCapys++;
+                    const remaining = 5 - foundCapys;
+                    subText.innerText = `남은 카피바라: ${remaining}마리`;
+
+                    if (foundCapys >= 5) {
+                        clearInterval(game3Timer);
+                        winCount++;
+                        updateScoreBoards();
+                        status.innerText = '🎉 5마리 모두 찾기 성공!';
+                        status.style.color = '#2e7d32';
+                        confetti({ particleCount: 70 });
+                        document.getElementById('btnFinalResult').style.display = 'block';
+                    }
+                };
+                field.appendChild(capy);
             });
 
-            if (stepNum === 2) {
-                setupSlot();
-            } else if (stepNum === 3) {
-                setupCards();
-            }
-        }
+            // 1 Minute (60 seconds) Timer
+            let totalTime = 60000;
+            let timeLeft = totalTime;
 
-        /* ---------------- STEP 1: WORLD CUP ---------------- */
-        let currentCandidates = [];
-        let nextRoundCandidates = [];
-        let currentPairIndex = 0;
-        let step1Winner = null;
+            game3Timer = setInterval(() => {
+                timeLeft -= 100;
+                const pct = (timeLeft / totalTime) * 100;
+                timerBar.style.width = `${Math.max(0, pct)}%`;
 
-        function initWorldCup() {
-            currentCandidates = [...rawMenuList].sort(() => Math.random() - 0.5);
-            nextRoundCandidates = [];
-            currentPairIndex = 0;
-            renderMatch();
-        }
-
-        function renderMatch() {
-            const container = document.getElementById('vsContainer');
-            const roundText = document.getElementById('worldcupRoundText');
-            container.innerHTML = '';
-
-            if (currentCandidates.length === 1) {
-                // Final Winner of Step 1
-                step1Winner = currentCandidates[0];
-                roundText.innerHTML = `🏆 1단계 우승: <b>${step1Winner.emoji} ${step1Winner.name}</b>`;
-                container.innerHTML = `
-                    <div style="text-align:center; padding: 20px;">
-                        <div style="font-size:80px; animation: bounce 1s infinite;">${step1Winner.emoji}</div>
-                        <h2 style="font-size:32px; color:#2e7d32; margin-top:10px;">${step1Winner.name}</h2>
-                    </div>
-                `;
-                document.getElementById('btnNext1').style.display = 'block';
-                return;
-            }
-
-            // Handle Odd Number Bypass (Bye)
-            if (currentPairIndex >= currentCandidates.length - 1) {
-                if (currentPairIndex === currentCandidates.length - 1) {
-                    nextRoundCandidates.push(currentCandidates[currentPairIndex]);
+                const secLeft = Math.ceil(timeLeft / 1000);
+                if (foundCapys < 5) {
+                    subText.innerText = `남은 카피바라: ${5 - foundCapys}마리 | 남은 시간: ${secLeft}초`;
                 }
-                currentCandidates = [...nextRoundCandidates];
-                nextRoundCandidates = [];
-                currentPairIndex = 0;
-                renderMatch();
-                return;
-            }
 
-            const itemA = currentCandidates[currentPairIndex];
-            const itemB = currentCandidates[currentPairIndex + 1];
-
-            roundText.innerText = `${currentCandidates.length}강 진행 중 (${Math.floor(currentPairIndex/2) + 1}/${Math.ceil(currentCandidates.length/2)})`;
-
-            container.innerHTML = `
-                <div class="vs-card" onclick="selectCandidate(0)">
-                    <span class="food-emoji">${itemA.emoji}</span>
-                    <span class="food-name">${itemA.name}</span>
-                </div>
-                <div class="vs-badge">VS</div>
-                <div class="vs-card" onclick="selectCandidate(1)">
-                    <span class="food-emoji">${itemB.emoji}</span>
-                    <span class="food-name">${itemB.name}</span>
-                </div>
-            `;
-        }
-
-        function selectCandidate(selectedIndex) {
-            playSound('click');
-            const selected = currentCandidates[currentPairIndex + selectedIndex];
-            nextRoundCandidates.push(selected);
-            currentPairIndex += 2;
-            renderMatch();
-        }
-
-        /* ---------------- STEP 2: SLOT MACHINE ---------------- */
-        let slotOptions = [];
-        let step2Winner = null;
-
-        function setupSlot() {
-            // Guarantee Step 1 Winner + 2 random items
-            const remaining = rawMenuList.filter(m => m.name !== step1Winner.name);
-            const shuffled = remaining.sort(() => Math.random() - 0.5);
-            slotOptions = [step1Winner, shuffled[0], shuffled[1]].sort(() => Math.random() - 0.5);
-            document.getElementById('slotReel').innerText = "❓❓❓";
-            document.getElementById('btnSpin').style.display = 'inline-block';
-            document.getElementById('btnNext2').style.display = 'none';
-        }
-
-        function spinSlot() {
-            playSound('click');
-            const reel = document.getElementById('slotReel');
-            const btnSpin = document.getElementById('btnSpin');
-            btnSpin.disabled = true;
-
-            let counter = 0;
-            const interval = setInterval(() => {
-                const randomItem = slotOptions[Math.floor(Math.random() * slotOptions.length)];
-                reel.innerText = `${randomItem.emoji} ${randomItem.name}`;
-                playSound('slot');
-                counter++;
-
-                if (counter > 20) {
-                    clearInterval(interval);
-                    step2Winner = slotOptions[Math.floor(Math.random() * slotOptions.length)];
-                    reel.innerText = `${step2Winner.emoji} ${step2Winner.name}`;
-                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-                    btnSpin.style.display = 'none';
-                    document.getElementById('btnNext2').style.display = 'block';
+                if (timeLeft <= 0) {
+                    clearInterval(game3Timer);
+                    if (foundCapys < 5) {
+                        playSound('fail');
+                        status.innerText = '⏰ 1분 시간 초과! 실패!';
+                        status.style.color = '#e74c3c';
+                        document.getElementById('btnFinalResult').style.display = 'block';
+                    }
                 }
             }, 100);
         }
 
-        /* ---------------- STEP 3: MYSTIC CARDS ---------------- */
-        let finalSelectedMenu = null;
-
-        function setupCards() {
-            const grid = document.getElementById('cardsGrid');
-            grid.innerHTML = '';
-
-            // Card Pool includes Step 2 Winner
-            const otherPool = rawMenuList.filter(m => m.name !== step2Winner.name).sort(() => Math.random() - 0.5);
-            const cardItems = [step2Winner, otherPool[0], otherPool[1]].sort(() => Math.random() - 0.5);
-
-            cardItems.forEach((item, idx) => {
-                const card = document.createElement('div');
-                card.className = 'mystic-card';
-                card.innerHTML = `<div class="card-inner">🦫<span style="font-size:18px;">카드 ${idx+1}</span></div>`;
-                card.onclick = () => pickCard(card, item);
-                grid.appendChild(card);
-            });
-            document.getElementById('btnNext3').style.display = 'none';
-        }
-
-        function pickCard(cardElement, selectedItem) {
-            if (finalSelectedMenu) return; // Prevent double pick
-            playSound('click');
-            finalSelectedMenu = selectedItem;
-
-            cardElement.classList.add('flipped');
-            cardElement.innerHTML = `
-                <div class="card-inner">
-                    <span style="font-size:40px;">${selectedItem.emoji}</span>
-                    <span style="font-size:22px; font-weight:bold; color:#2c3e50;">${selectedItem.name}</span>
-                </div>
-            `;
-
-            confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
-            document.getElementById('btnNext3').style.display = 'block';
-        }
-
-        /* ---------------- FINAL PRANK REVEAL ---------------- */
+        /* ----- FINAL RESULT ----- */
         function showFinalResult() {
             playSound('click');
-            goToStep(4);
-            document.getElementById('finalMenuText').innerText = `${finalSelectedMenu.emoji} ${finalSelectedMenu.name}`;
+            switchScreen('screenFinal');
 
-            confetti({ particleCount: 100, spread: 100, origin: { y: 0.5 } });
+            const menuTitle = document.getElementById('finalMenuName');
+            const finalMsg = document.getElementById('finalMessage');
+            const finalIcon = document.getElementById('finalIcon');
+            const finalTitle = document.getElementById('finalTitle');
 
-            // Trigger Prank Overlay after 2.5 seconds delay
-            setTimeout(() => {
-                playSound('prank');
-                document.getElementById('prankOverlay').classList.add('active');
-            }, 2500);
+            menuTitle.innerText = `${chosenMenu.emoji} ${chosenMenu.name}`;
+
+            if (winCount >= 2) {
+                // Success (2 or 3 wins)
+                finalIcon.innerText = '🎉🦫';
+                finalTitle.innerText = '최종 승리!';
+                finalTitle.style.color = '#2e7d32';
+                finalMsg.innerText = '성공! 갱이가 사주께! ❤️';
+                finalMsg.style.color = '#2e7d32';
+                confetti({ particleCount: 120, spread: 100 });
+            } else {
+                // Failure (Less than 2 wins)
+                finalIcon.innerText = '🍲❌';
+                finalTitle.innerText = '최종 실패!';
+                finalTitle.style.color = '#c0392b';
+                finalMsg.innerText = '실패! 국물도 없어! 🤪';
+                finalMsg.style.color = '#c0392b';
+            }
         }
     </script>
 </body>
