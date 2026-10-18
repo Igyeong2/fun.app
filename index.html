@@ -176,7 +176,7 @@
             transition: width 0.1s linear;
         }
 
-        /* GAME 1: INSTRUCTION & 8x8 GRID */
+        /* GAME 1: INSTRUCTION & 10x10 GRID */
         .instruction-card {
             background: #fff;
             border: 4px solid #ffb74d;
@@ -190,25 +190,26 @@
 
         .text-grid {
             display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 4px;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
             width: 100%;
             background: #fff;
-            padding: 8px;
+            padding: 6px;
             border-radius: 20px;
             border: 4px solid #ffb74d;
             margin: 10px 0;
         }
 
+        /* Noto Sans KR 100% 동일 고딕체 */
         .text-cell {
             background: #fff3e0;
-            padding: 8px 0;
+            padding: 6px 0;
             text-align: center;
             font-family: 'Noto Sans KR', sans-serif !important;
-            font-size: 13px !important;
+            font-size: 11px !important;
             font-weight: 700 !important;
             letter-spacing: -0.5px !important;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             border: 1px solid #ffe0b2;
             color: #2c3e50;
@@ -244,7 +245,7 @@
             font-size: 55px;
             position: absolute;
             bottom: -70px;
-            transition: bottom 0.15s ease-out;
+            transition: bottom 0.25s ease-out; /* 조금 느리게 올라오도록 조정 */
             cursor: pointer;
         }
 
@@ -375,9 +376,9 @@
 
             <div class="instruction-card">
                 <div style="font-size: 55px; margin-bottom: 10px;">👀⚡</div>
-                <h3 style="font-size: 28px; color: #e67e22; margin-bottom: 10px;">'갷이'를 찾아라! (8x8)</h3>
+                <h3 style="font-size: 28px; color: #e67e22; margin-bottom: 10px;">'갷이'를 찾아라! (10x10)</h3>
                 <p style="font-size: 22px; color: #444; line-height: 1.4; word-break: keep-all;">
-                    '갱이'들 속에 숨은 <b>'갷이'</b> 단 1개를<br>
+                    '갱이' 99개 속 숨은 <b>'갷이'</b> 단 1개를<br>
                     <span style="color:#e74c3c; font-weight:bold;">2초 안에</span> 터치해야 합니다!
                 </p>
             </div>
@@ -400,7 +401,6 @@
 
             <div style="width:100%; text-align:center;">
                 <p id="game1Status" style="font-size:22px; font-weight:bold;"></p>
-                <button class="btn" id="btnRetry1" style="display:none; background:#e74c3c;" onclick="goToGame1Instruction()">🔄 다시 도전하기</button>
                 <button class="btn" id="btnNextGame2" style="display:none;" onclick="goToGame2()">게임 2 도전하기 ➡️</button>
             </div>
         </div>
@@ -431,7 +431,6 @@
 
             <div style="width:100%; text-align:center;">
                 <p id="game2Status" style="font-size:22px; font-weight:bold;"></p>
-                <button class="btn" id="btnRetry2" style="display:none; background:#e74c3c;" onclick="goToGame2()">🔄 다시 도전하기</button>
                 <button class="btn" id="btnNextGame3" style="display:none;" onclick="goToGame3()">마지막 게임 3 도전! ➡️</button>
             </div>
         </div>
@@ -550,7 +549,7 @@
             document.getElementById('scoreBoard3').innerText = `현재 승수: ${winCount}승 / 3판 중 2승 필요`;
         }
 
-        /* ----- GAME 1: INSTRUCTION & PLAY ----- */
+        /* ----- GAME 1: INSTRUCTION & PLAY (10x10) ----- */
         function goToGame1Instruction() {
             playSound('click');
             switchScreen('screenGame1Instruction');
@@ -568,16 +567,14 @@
             const grid = document.getElementById('textGrid1');
             const status = document.getElementById('game1Status');
             const timerBar = document.getElementById('timerBar1');
-            const btnRetry = document.getElementById('btnRetry1');
             const btnNext = document.getElementById('btnNextGame2');
 
             grid.innerHTML = '';
             status.innerText = '';
-            btnRetry.style.display = 'none';
             btnNext.style.display = 'none';
             timerBar.style.width = '100%';
 
-            const total = 64;
+            const total = 100; // 10x10 = 100개
             const targetIdx = Math.floor(Math.random() * total);
 
             for (let i = 0; i < total; i++) {
@@ -611,13 +608,12 @@
                     playSound('fail');
                     status.innerText = '⏰ 시간 초과! 패배!';
                     status.style.color = '#e74c3c';
-                    btnRetry.style.display = 'block';
-                    btnNext.style.display = 'block';
+                    btnNext.style.display = 'block'; // 다시하기 없이 무조건 다음 단계
                 }
             }, 50);
         }
 
-        /* ----- GAME 2: CATCH CAPYBARA (10 SECONDS / 6 CAPYBARAS) ----- */
+        /* ----- GAME 2: CATCH CAPYBARA (10 SECONDS / 6 CAPYBARAS + BEARS) ----- */
         let capyCount = 0;
         let moleInterval = null;
 
@@ -636,11 +632,9 @@
             const subText = document.getElementById('capyScoreText');
             const status = document.getElementById('game2Status');
             const timerBar = document.getElementById('timerBar2');
-            const btnRetry = document.getElementById('btnRetry2');
             const btnNext = document.getElementById('btnNextGame3');
 
             status.innerText = '';
-            btnRetry.style.display = 'none';
             btnNext.style.display = 'none';
             subText.innerText = `남은 횟수: 6마리 | 제한시간: 10초`;
             timerBar.style.width = '100%';
@@ -668,8 +662,7 @@
                         playSound('fail');
                         status.innerText = '⏰ 10초 시간 초과! 패배!';
                         status.style.color = '#e74c3c';
-                        btnRetry.style.display = 'block';
-                        btnNext.style.display = 'block'; // 실패해도 다음 게임 버튼 표시
+                        btnNext.style.display = 'block'; // 다시하기 없이 다음 단계
                     }
                 }
             }, 100);
@@ -677,34 +670,60 @@
 
         function startMoles() {
             const holes = document.querySelectorAll('.capy-hole');
+            const creatures = ['🦫', '🦫', '🐻', '🐰', '🐿️']; // 갱이(카피바라) 비율 높게 + 곰 등 섞음
+            
             clearInterval(moleInterval);
+            // 튀어나오는 속도를 750ms로 적절히 완화
             moleInterval = setInterval(() => {
-                holes.forEach(h => h.classList.remove('up'));
+                holes.forEach(h => {
+                    h.classList.remove('up');
+                    const target = h.querySelector('.capy-target');
+                    if (target) target.removeAttribute('data-capy');
+                });
+
                 const randomHole = holes[Math.floor(Math.random() * holes.length)];
+                const randomCreature = creatures[Math.floor(Math.random() * creatures.length)];
+                
+                const targetEl = randomHole.querySelector('.capy-target');
+                if (targetEl) {
+                    targetEl.innerText = randomCreature;
+                    if (randomCreature === '🦫') {
+                        targetEl.setAttribute('data-capy', 'true');
+                    }
+                }
                 randomHole.classList.add('up');
-            }, 550);
+            }, 750);
         }
 
         function hitCapy(element) {
             if (capyCount <= 0) return;
-            playSound('click');
-            element.parentElement.classList.remove('up');
-            capyCount--;
 
-            const subText = document.getElementById('capyScoreText');
-            if (capyCount > 0) {
-                subText.innerText = `남은 횟수: ${capyCount}마리`;
+            // 갱이(🦫)를 누른 경우만 인정
+            if (element.getAttribute('data-capy') === 'true') {
+                playSound('click');
+                element.parentElement.classList.remove('up');
+                element.removeAttribute('data-capy');
+                capyCount--;
+
+                const subText = document.getElementById('capyScoreText');
+                if (capyCount > 0) {
+                    subText.innerText = `남은 횟수: ${capyCount}마리`;
+                } else {
+                    clearInterval(game2Timer);
+                    clearInterval(moleInterval);
+                    winCount++;
+                    updateScoreBoards();
+                    const status = document.getElementById('game2Status');
+                    status.innerText = '🎉 갱이 6마리 잡기 성공!';
+                    status.style.color = '#2e7d32';
+                    subText.innerText = '🎉 미션 성공!';
+                    confetti({ particleCount: 70 });
+                    document.getElementById('btnNextGame3').style.display = 'block';
+                }
             } else {
-                clearInterval(game2Timer);
-                clearInterval(moleInterval);
-                winCount++;
-                updateScoreBoards();
-                const status = document.getElementById('game2Status');
-                status.innerText = '🎉 갱이 6마리 잡기 성공!';
-                status.style.color = '#2e7d32';
-                subText.innerText = '🎉 미션 성공!';
-                confetti({ particleCount: 70 });
-                document.getElementById('btnNextGame3').style.display = 'block'; // 성공 시 다음 게임 버튼 표시
+                // 곰이나 다른 동물을 누르면 꽝음 소리
+                playSound('fail');
+                element.parentElement.classList.remove('up');
             }
         }
 
@@ -732,7 +751,7 @@
             subText.innerText = `남은 카피바라: 5마리 | 제한시간: 10초`;
             timerBar.style.width = '100%';
 
-            // 1. 배경을 가득 채우는 풀, 나무, 꽃
+            // 1. 배경 데코 풀/나무
             const decos = ['🌿', '🌱', '🌾', '🌸', '🌼', '🌳', '🌲', '☘️', '🎋'];
             for (let i = 0; i < 22; i++) {
                 const dec = document.createElement('div');
@@ -745,7 +764,7 @@
                 field.appendChild(dec);
             }
 
-            // 2. 눈속임용 동물들
+            // 2. 눈속임 동요 요소 (곰 등)
             const fakeAnimals = ['🐻', '🐰', '🐿️', '🐶', '🐦', '🦊', '🐱', '🐹'];
             for (let i = 0; i < 15; i++) {
                 const fake = document.createElement('div');
@@ -798,7 +817,7 @@
                 field.appendChild(capy);
             });
 
-            // 10초 제한시간 (10,000ms)
+            // 10초 제한시간
             let totalTime = 10000;
             let timeLeft = totalTime;
 
@@ -816,7 +835,7 @@
                     clearInterval(game3Timer);
                     if (foundCapys < 5) {
                         playSound('fail');
-                        status.innerText = '⏰ 10초 시간 초과! 실패!';
+                        status.innerText = '⏰ 10초 시간 초과! 패배!';
                         status.style.color = '#e74c3c';
                         document.getElementById('btnFinalResult').style.display = 'block';
                     }
